@@ -43,13 +43,13 @@ public class QueueServiceTest {
         Resp result4 = queueService.process(
                 new Req("GET", "queue", "weather", null)
         );
-        assertNull(result1.text());
+        assertThat(result1.text(), is("Entry is null"));
         assertThat(result1.status(), is("404"));
-        assertThat(result2.text(), is(""));
+        assertThat(result2.text(), is("Entry is added"));
         assertThat(result2.status(), is("200"));
         assertThat(result3.text(), is("temperature=18"));
         assertThat(result3.status(), is("200"));
-        assertNull(result4.text());
+        assertThat(result4.text(), is("Entry is null"));
         assertThat(result4.status(), is("404"));
     }
 }
