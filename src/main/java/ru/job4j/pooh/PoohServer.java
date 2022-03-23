@@ -1,5 +1,12 @@
 package ru.job4j.pooh;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,30 +20,44 @@ public class PoohServer {
         ExecutorService pool = Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors()
         );
-//        try (ServerSocket server = new ServerSocket(9000)) {
-//            while (!server.isClosed()) {
-//                Socket socket = server.accept();
-//                pool.execute(() -> {
-//                    try (OutputStream out = socket.getOutputStream();
-//                         InputStream input = socket.getInputStream()) {
-//                        byte[] buff = new byte[1_000_000];
-//                        var total = input.read(buff);
-//                        var content = new String(Arrays.copyOfRange(buff, 0, total), StandardCharsets.UTF_8);
-//                        var req = Req.of(content);
-//                        var resp = modes.get(req.getPoohMode()).process(req);
-//                        String ls = System.lineSeparator();
-//                        out.write(("HTTP/1.1 " + resp.status() + ls).getBytes());
-//                        out.write((resp.text().concat(ls)).getBytes());
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try (ServerSocket server = new ServerSocket(9000)) {
+            while (!server.isClosed()) {
+                Socket socket = server.accept();
+                pool.execute(() -> {
+                    try (OutputStream out = socket.getOutputStream();
+                         InputStream input = socket.getInputStream()) {
+                        byte[] buff = new byte[1_000_000];
+                        var total = input.read(buff);
+                        var content = new String(Arrays.copyOfRange(buff, 0, total), StandardCharsets.UTF_8);
+                        var req = Req.of(content);
+                        System.out.println("Server req: " + req.getParam());
+                        var resp = modes.get(req.getPoohMode()).process(req);
+                        System.out.println("Server resp: " + resp.text() + " " + resp.status());
+                        String ls = System.lineSeparator();
+                        out.write(("HTTP/1.1 " + resp.status() + ls).getBytes());
+                        out.write((resp.text().concat(ls)).getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Примеры запросов для тестов в cURL;
+     *
+     * curl -X GET http://localhost:9000/queue/weather
+     * curl -X POST -d "temperature=18" http://localhost:9000/queue/weather
+     * curl -X GET http://localhost:9000/queue/weather
+     * curl -X POST -d "temperature=18" http://localhost:9000/topic/weather
+     * curl -X GET http://localhost:9000/topic/weather
+     * curl -X POST -d "temperature=18" http://localhost:9000/topic/weather
+     * curl -X GET http://localhost:9000/topic/weather
+     * @param args нет
+     */
     public static void main(String[] args) {
         new PoohServer().start();
     }
