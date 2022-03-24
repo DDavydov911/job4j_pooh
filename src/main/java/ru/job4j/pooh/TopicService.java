@@ -28,7 +28,9 @@ public class TopicService implements Service {
                     weather.values().forEach(value -> value.add(req.getParam()));
                 }
             }
-            default -> result = new Resp("", "501");
+            default -> {
+                result = new Resp("", "501");
+            }
         }
         return result;
     }

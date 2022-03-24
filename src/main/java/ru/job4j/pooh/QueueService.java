@@ -22,7 +22,9 @@ public class QueueService implements Service {
                 queue.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue<>());
                 queue.get(req.getSourceName()).add(req.getParam());
             }
-            default -> result = new Resp("", "501");
+            default -> {
+                result = new Resp("", "501");
+            }
         }
         return result;
     }
