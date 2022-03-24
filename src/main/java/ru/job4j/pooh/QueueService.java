@@ -10,17 +10,19 @@ public class QueueService implements Service {
 
     @Override
     public Resp process(Req req) {
-        Resp result = new Resp("", "500");
-        if ("POST".equals(req.httpRequestType())) {
-            queue.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue<>());
-            queue.get(req.getSourceName()).add(req.getParam());
-            result = new Resp("Entry is added", "200");
-            System.out.println(result.text());
-        }
-        if ("GET".equals(req.httpRequestType())) {
-            String param = queue.getOrDefault(req.getSourceName(), new ConcurrentLinkedQueue<>()).poll();
-            result = param != null ? new Resp(param, "200") : new Resp("Entry is null", "404");
-            System.out.println(result.text());
+        Resp result = new Resp("", "204");
+        switch (req.httpRequestType()) {
+            case "GET" -> {
+                String param = queue.getOrDefault(req.getSourceName(), new ConcurrentLinkedQueue<>()).poll();
+                if (param != null) {
+                   result = new Resp("param=" + param, "204");
+                }
+            }
+            case "POST" -> {
+                queue.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue<>());
+                queue.get(req.getSourceName()).add(req.getParam());
+            }
+            default -> result = new Resp("", "501");
         }
         return result;
     }

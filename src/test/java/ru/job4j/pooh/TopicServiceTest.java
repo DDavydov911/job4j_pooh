@@ -31,7 +31,7 @@ public class TopicServiceTest {
         Resp result2 = topicService.process(
                 new Req("GET", "topic", "weather", paramForSubscriber2)
         );
-        assertThat(result1.text(), is("temperature=18"));
+        assertThat(result1.text(), is("param=temperature=18"));
         assertThat(result2.text(), is(""));
     }
 
@@ -57,15 +57,20 @@ public class TopicServiceTest {
         Resp result5 = topicService.process(
                 new Req("GET", "topic", "weather", paramForSubscriber2)
         );
-        assertNull(result1.text());
-        assertThat(result1.status(), is("404"));
+        Resp result6 = topicService.process(
+                new Req("PUT", "topic", "weather", paramForSubscriber2)
+        );
+        assertThat(result1.text(), is(""));
+        assertThat(result1.status(), is("204"));
         assertThat(result2.text(), is(""));
-        assertThat(result2.status(), is("207"));
+        assertThat(result2.status(), is("204"));
         assertThat(result3.text(), is(""));
-        assertThat(result3.status(), is("200"));
-        assertThat(result4.text(), is("temperature=18"));
-        assertThat(result4.status(), is("200"));
+        assertThat(result3.status(), is("204"));
+        assertThat(result4.text(), is("param=temperature=18"));
+        assertThat(result4.status(), is("204"));
         assertThat(result5.text(), is(""));
-        assertThat(result5.status(), is("404"));
+        assertThat(result5.status(), is("204"));
+        assertThat(result6.text(), is(""));
+        assertThat(result6.status(), is("501"));
     }
 }
