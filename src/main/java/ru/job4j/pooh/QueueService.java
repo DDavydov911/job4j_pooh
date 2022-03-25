@@ -15,7 +15,7 @@ public class QueueService implements Service {
             case "GET" -> {
                 String param = queue.getOrDefault(req.getSourceName(), new ConcurrentLinkedQueue<>()).poll();
                 if (param != null) {
-                   result = new Resp("param=" + param, "204");
+                   result = new Resp(param, "204");
                 }
             }
             case "POST" -> {

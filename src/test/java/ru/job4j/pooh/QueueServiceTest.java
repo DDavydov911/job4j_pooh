@@ -24,7 +24,7 @@ public class QueueServiceTest {
         Resp result = queueService.process(
                 new Req("GET", "queue", "weather", null)
         );
-        assertThat(result.text(), is("param=temperature=18"));
+        assertThat(result.text(), is("temperature=18"));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class QueueServiceTest {
         assertThat(result1.status(), is("204"));
         assertThat(result2.text(), is(""));
         assertThat(result2.status(), is("204"));
-        assertThat(result3.text(), is("param=temperature=18"));
+        assertThat(result3.text(), is("temperature=18"));
         assertThat(result3.status(), is("204"));
         assertThat(result4.text(), is(""));
         assertThat(result4.status(), is("204"));

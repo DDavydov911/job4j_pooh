@@ -16,10 +16,10 @@ public class TopicService implements Service {
             case "GET" -> {
                 map.putIfAbsent(req.getSourceName(), new ConcurrentHashMap<>());
                 map.get(req.getSourceName()).putIfAbsent(req.getParam(), new ConcurrentLinkedQueue<>());
-                String res = map.getOrDefault(req.getSourceName(), new ConcurrentHashMap<>())
+                String param = map.getOrDefault(req.getSourceName(), new ConcurrentHashMap<>())
                         .getOrDefault(req.getParam(), new ConcurrentLinkedQueue<>()).poll();
-                if (res != null) {
-                    result = new Resp("param=" + res, "204");
+                if (param != null) {
+                    result = new Resp(param, "204");
                 }
             }
             case "POST" -> {
